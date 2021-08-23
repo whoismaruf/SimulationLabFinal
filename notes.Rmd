@@ -23,7 +23,7 @@ First, we have created a function named `maruf` where it takes one argument `num
 
 ---
 
-### 2. Create a function `correl` to calculate correlation coefficient between X and Y. You may generate X and Y from any distribution. Also create a function `RC` to calculate regression coefficient of Y on X and X on Y.
+### 2. Create a function `correl` to calculate correlation coefficient between X and Y. You may generate X and Y from any distribution. Also create a function `RC` to calculate regression coefficient of `Y on X` and `X on Y`.
 
 ```{r}
 
@@ -32,11 +32,20 @@ correl <- function(X, Y) {
   return(c('Correlation Coefficient'= res))
 }
 
-X = runif(14, 1, 50)
-Y = runif(14, 1, 50)
+RC <- function(formula, data) {
+  rel <- lm(formula=formula, data=data)
+  return(rel)
+}
 
-plot(X, Y)
-correl(X, Y)
+set.seed(1)
+
+X=c(rnorm(10, 1, 30))
+Y=c(rnorm(10, 100, 1000))
+
+data <- data.frame(X, Y)
+
+RC(y~x, data=data)
+RC(x~y, data=data)
 
 ```
 
