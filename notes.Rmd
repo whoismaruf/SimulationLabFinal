@@ -50,14 +50,79 @@ RC(x~y, data=data)
 ```
 
 
+### 3.  Starting with X0 = 1, write down the entire cycle for Xi = 11Xi-1mod (16).
+
+```{r}
+
+X <- c(1)
+
+a <- 11
+m <- 16
+n <- 15
+
+for (i in 1:n){
+  X[i+1] <- (a*X[i])%%m
+  # 11 <- (11*1)mod(16)
+}
+
+R <- X/m
+X
+
+```
 
 
 
 
+### 4.  Implement the pseudo-random number generator: `Xi = 168Xi-1 mod (231-1)`. Using the seed `X0 = 123`, run the generator for `10` observations. 
+
+```{r}
+
+X <- c(123)
+a <- 168
+m <- (2^31)-1
+n <- 10
+c <- 1
+for (i in 1:n){
+  X[i+1] <- (a*X[i]+c)%%m
+}
+X
+R<-X/m
+R
+
+```
 
 
+### Implement the pseudo-random number generator: Xi = 16807Xi-1 mod (231-1). Using the seed X0 = 1234567, run the generator for 100,000 observations. Perform a chi-square goodness-of-fit test on the resulting PRN’s. Use 20 equal-probability intervals and level α = 0.05. Now perform a runs up-anddown test with α = 0.05 on the observations to see if they are independent.
 
+```{r}
+X<-c(1234567)
+a<-16807
+c<-1
+m<-(2^31)-1
+n<-10000
+for (i in 1:n){
+X[i+1] <- (a*X[i]+c)%%m
+}
 
+R<-X/m
+
+##To perform Chi-Square Test
+chisq.test(R)
+
+##Creating a interval
+intervals <- seq(0,1,by=0.05)
+O <- rep(0,20)
+for (i in 1:length(R)){
+for (j in 1:20){
+if(intervals[j] < R[i] && R[i] <= intervals[j+1]){
+O[j] <- O[j] + 1
+}
+}
+}
+O
+library(lawstat)
+runs.test(R)
+```
 
 
 
