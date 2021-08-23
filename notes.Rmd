@@ -1,0 +1,64 @@
+---
+title: "Assignment on Simulation Lab (Stat-3108)"
+output: html_notebook
+---
+
+---
+
+### 1. Create a function your `name` to calculate mean, variance, and standard deviation.
+
+```{r}
+
+maruf <- function(nums) {
+  mean <- mean(nums)
+  varience <- var(nums)
+  stdv <- sd(nums)
+  return(c(Mean=mean, Varience=varience, SD=stdv))
+}
+
+maruf(1:300)
+
+```
+First, we have created a function named `maruf` where it takes one argument `nums`. It can be a range of numbers like `1:300` or `[1, 2, 3, 4, 5]` etc.
+
+---
+
+### 2. Create a function `correl` to calculate correlation coefficient between X and Y. You may generate X and Y from any distribution. Also create a function `RC` to calculate regression coefficient of Y on X and X on Y.
+
+```{r}
+
+correl <- function(X, Y) {
+  res <- cor(X, Y)
+  return(c('Correlation Coefficient'= res))
+}
+
+X = runif(14, 1, 50)
+Y = runif(14, 1, 50)
+
+plot(X, Y)
+correl(X, Y)
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
