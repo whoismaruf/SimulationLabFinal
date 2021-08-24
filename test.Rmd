@@ -1,0 +1,86 @@
+---
+title: "Test Notebook"
+output: html_notebook
+---
+
+### Implement the pseudo-random number generator: Xi = 16807Xi-1 mod (231-1). Using the seed X0 = 1234567, run the generator for 100,000 observations. Perform a chi-square goodness-of-fit test on the resulting PRN’s. Use 20 equal-probability intervals and level α = 0.05. Now perform a runs up-anddown test with α = 0.05 on the observations to see if they are independent.
+
+
+```{r}
+X<-c(1234567)
+a<-16807
+c<-1
+m<-(2^31)-1
+n<-10000
+for (i in 1:n){
+X[i+1] <- (a*X[i]+c)%%m
+}
+
+R<-X/m
+
+##To perform Chi-Square Test
+chisq.test(R)
+
+##Creating a interval
+intervals <- seq(0,1,by=0.05)
+O <- rep(0,20)
+for (i in 1:length(R)){
+for (j in 1:20){
+if(intervals[j] < R[i] && R[i] <= intervals[j+1]){
+O[j] <- O[j] + 1
+}
+}
+}
+O
+library(lawstat)
+runs.test(R)
+```
+
+
+```{r}
+
+normrandbm <- function(){
+  U1 <- runif(1,0,1)
+  U2 <- runif(1,0,1)
+  X <- ((-2*log(U1))^(0.5))*cos(2*pi*U2)
+  Y <- ((-2*log(U1))^(0.5))*sin(2*pi*U2)
+  variables <- c("X" = X,"Y" = Y)
+  return(variables)
+}
+
+normrandbm()
+df <- data.frame("X", "Y")
+bmstats <- function(n){
+  
+  for(i in 1:n){
+    newData <- normrandbm()
+    names(newData) <- c("X", "Y")
+    rbind(df, newData)
+  }
+  return()
+}
+
+bmstats(5)
+df
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

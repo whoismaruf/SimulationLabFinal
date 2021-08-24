@@ -19,7 +19,6 @@ maruf <- function(nums) {
 maruf(1:300)
 
 ```
-First, we have created a function named `maruf` where it takes one argument `nums`. It can be a range of numbers like `1:300` or `[1, 2, 3, 4, 5]` etc.
 
 ---
 
@@ -42,15 +41,16 @@ set.seed(1)
 X=c(rnorm(10, 1, 30))
 Y=c(rnorm(10, 100, 1000))
 
-data <- data.frame(X, Y)
+data <- data.frame(x=X, y=Y)
 
 RC(y~x, data=data)
 RC(x~y, data=data)
 
 ```
 
+---
 
-### 3.  Starting with X0 = 1, write down the entire cycle for Xi = 11Xi-1mod (16).
+### 3.  Starting with `X0 = 1`, write down the entire cycle for `Xi = 11Xi-1mod (16)`.
 
 ```{r}
 
@@ -67,13 +67,14 @@ for (i in 1:n){
 
 R <- X/m
 X
+R
 
 ```
 
+---
 
 
-
-### 4.  Implement the pseudo-random number generator: `Xi = 168Xi-1 mod (231-1)`. Using the seed `X0 = 123`, run the generator for `10` observations. 
+### 4.  Implement the pseudo-random number generator: `Xi = 168Xi-1 mod (2^31-1)`. Using the seed `X0 = 123`, run the generator for `10` observations. 
 
 ```{r}
 
@@ -91,46 +92,113 @@ R
 
 ```
 
+---
 
-### Implement the pseudo-random number generator: Xi = 16807Xi-1 mod (231-1). Using the seed X0 = 1234567, run the generator for 100,000 observations. Perform a chi-square goodness-of-fit test on the resulting PRN’s. Use 20 equal-probability intervals and level α = 0.05. Now perform a runs up-anddown test with α = 0.05 on the observations to see if they are independent.
+
+### 5.  Implement, test, and compare different methods to generate from a` N (0, 1)` distribution. Generate random samples using the `Box-Müller` algorithm. Create a function normrandbm that:
+
+#### i)  Takes no input variables. 
+#### ii) Generates two uniform random numbers `V1, V2~U (0, 1)`
+#### iii) Returns two output variables: `X=(-lnV1)^1/2 cos(-2piV2)` and `Y=(-2lnV1)^1/2 sin(2piV2)` .As in a), create a function `bmstats` that can produce? Samples using `normrandbm` and return their `mean`, `median` and `standard deviation`.
+
 
 ```{r}
-X<-c(1234567)
-a<-16807
-c<-1
-m<-(2^31)-1
-n<-10000
-for (i in 1:n){
-X[i+1] <- (a*X[i]+c)%%m
+
+normrandbm <- function(){
+  U1 <- runif(1,0,1)
+  U2 <- runif(1,0,1)
+  X <- ((-2*log(U1))^(0.5))*cos(2*pi*U2)
+  Y <- ((-2*log(U1))^(0.5))*sin(2*pi*U2)
+  variables <- c("X" = X,"Y" = Y)
+  return(variables)
 }
 
-R<-X/m
 
-##To perform Chi-Square Test
-chisq.test(R)
+bmstats <- function(n){
+  df <- data.frame()
+  for(i in 1:n){
+    newSample <- normrandbm()
+    df[i,1] <- as.numeric(newSample[1])
+    df[i,2] <- as.numeric(newSample[2])
+  }
+  names(df) <- c("X", "Y")
+  return(c("Mean(X)"=mean(df$X),
+           "SD(X)"=sd(df$X),
+           "Mean(Y)"=mean(df$Y),
+           "SD(Y)"=sd(df$Y)))
+}
 
-##Creating a interval
-intervals <- seq(0,1,by=0.05)
-O <- rep(0,20)
-for (i in 1:length(R)){
-for (j in 1:20){
-if(intervals[j] < R[i] && R[i] <= intervals[j+1]){
-O[j] <- O[j] + 1
-}
-}
-}
-O
-library(lawstat)
-runs.test(R)
+bmstats(2300)
+
 ```
 
+---
 
 
+### 6. Generate random samples using inverse-transform method from the following pdf- 
+#### `(a) f(x)=10e^-10x; x>0` and `(b) f(x)=1/10(e^-x/10); x>0`
+
+For `a` the CDF is `1-e^-10x`, so `x = -(1/10*log(1-U))`
+
+```{r}
+
+n <- 10
+U <- runif(n)
+X <- -log(1-U)/10
+X
+```
+
+For `b` the CDF is `1-e^-1/10x`, so `x = -(10*log(1-U))`
+
+```{r}
+
+n <- 10
+U <- runif(n)
+X <- -log(1-U)*10
+X
+
+```
+
+---
 
 
+### 8. Let us consider the a discrete random variable `x` follows the following distribution: 
+
+#### `0        1      2        3`
+#### `1/8     3/8     3/8     1/8`
+
+### Simulate `100` random samples from the above distribution using `inverse-transformation` methods. Also plot both the `true probability vector` and the `empirical proportions` from simulation and `compare` it.
 
 
+```{r}
 
+discrete.inv.transform.sample <- function(probabilityVector) {
+   U <- runif(1)
+   if(U <= probabilityVector[1]){
+    return(1)
+   }
+   for( i in 2:length(probabilityVector)) {
+     if(sum(probabilityVector[1:(i-1)]) < U && U <= sum(probabilityVector[1:i])) {
+      return(i)
+     }
+   }
+}
+
+num.samples <- 100
+probabilityVector<- c(1/8, 3/8, 3/8, 3/8)
+names(probabilityVector) <- 0:3
+samples <- numeric(num.samples)
+
+for(i in seq_len(num.samples) ) {
+ samples[i] <- discrete.inv.transform.sample(probabilityVector)
+}
+
+par(mfrow=c(1,2))
+
+barplot(probabilityVector, main='True Probability Mass Function')
+barplot(table(samples), main='Empirical Probability Mass Function')
+
+```
 
 
 
