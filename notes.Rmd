@@ -18,6 +18,7 @@ maruf <- function(nums) {
 
 maruf(1:300)
 
+
 ```
 
 ---
@@ -31,6 +32,11 @@ correl <- function(X, Y) {
   return(c('Correlation Coefficient'= res))
 }
 
+X <- runif(20)
+Y <- runif(20)
+
+correl(X, Y)
+
 RC <- function(formula, data) {
   rel <- lm(formula=formula, data=data)
   return(rel)
@@ -38,13 +44,15 @@ RC <- function(formula, data) {
 
 set.seed(1)
 
-X=c(rnorm(10, 1, 30))
-Y=c(rnorm(10, 100, 1000))
+X <- c(rnorm(10, 1, 30))
+Y <- c(rnorm(10, 100, 1000))
 
 data <- data.frame(x=X, y=Y)
 
 RC(y~x, data=data)
 RC(x~y, data=data)
+
+data
 
 ```
 
@@ -60,9 +68,9 @@ a <- 11
 m <- 16
 n <- 15
 
+
 for (i in 1:n){
   X[i+1] <- (a*X[i])%%m
-  # 11 <- (11*1)mod(16)
 }
 
 R <- X/m
@@ -158,6 +166,27 @@ X <- -log(1-U)*10
 X
 
 ```
+
+---
+
+### 7. Consider the function ` g(u) = 4√(1-u^2); u~[0,1]`. Evaluate it using Monte Carlo integration simulation.
+
+
+```{r}
+
+MC.simple.est <- function(g, a, b, n=1e4) {
+ xi <- runif(n,a,b) # step 1
+ g.mean <- mean(g(xi)) # step 2
+ return((b-a)*g.mean) # step 3
+}
+
+g <- function(x) 4*sqrt(1-x^2)
+
+MC.simple.est(g, 0, 1)
+
+```
+
+
 
 ---
 
